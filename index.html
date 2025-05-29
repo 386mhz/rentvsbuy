@@ -46,18 +46,20 @@
         }
 
         .assumptions {
-            background: rgba(255, 243, 205, 0.3);
-            border: 1px solid #ffc107;
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.7);
             border-radius: 8px;
             padding: 15px;
             margin: 15px 0;
             font-size: 0.9rem;
-            color: #856404;
+            color: #2c3e50;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
 
         .assumptions h4 {
             margin-bottom: 8px;
-            color: #856404;
+            color: #2c3e50;
+            font-weight: 600;
         }
 
         .main-content {
@@ -112,7 +114,22 @@
             background: white;
             box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
         }
+		
+		.input-group input[readonly] {
+			background-color: #f8f9fa !important;
+			color: #6c757d !important;
+			cursor: not-allowed !important;
+			border-color: #dee2e6 !important;
+			opacity: 0.8;
+		}
 
+		.input-group input[readonly]:focus {
+			background-color: #f8f9fa !important;
+			border-color: #dee2e6 !important;
+			box-shadow: none !important;
+			color: #6c757d !important;
+		}
+		
         .results-section {
             background: white;
             border-radius: 15px;
@@ -320,7 +337,7 @@
 
         <div class="main-content">
             <div class="input-section">
-                <h2 class="section-title">🏠 Housing Assumptions</h2>
+                <h2 class="section-title">🏠 Owning Assumptions</h2>
                 
                 <div class="two-column">
                     <div class="input-group">
@@ -332,13 +349,6 @@
                         <label>Down Payment (%)</label>
                         <input type="number" id="downPayment" value="25" step="0.1">
                     </div>
-                </div>
-
-                <div class="two-column">
-                    <div class="input-group">
-                        <label>Initial Monthly Rent ($)</label>
-                        <input type="number" id="monthlyRent" value="4200">
-                    </div>
                     
                     <div class="input-group">
                         <label>Amortization (Years)</label>
@@ -346,6 +356,25 @@
                     </div>
                 </div>
 
+				<h2 class="section-title">🏠 Renting Assumptions</h2>
+                
+                <div class="input-group">
+                    <label>Initial Monthly Rent ($)</label>
+                    <input type="number" id="monthlyRent" value="4200">
+                </div>
+
+                <div class="two-column">
+                    <div class="input-group">
+                        <label>Annual Rent Increase (%)</label>
+                        <input type="number" id="rentIncrease" value="3.0" step="0.1">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Renters Insurance (% of rent)</label>
+                        <input type="number" id="rentersInsurancePercent" value="0.5" step="0.1">
+                    </div>
+                </div>
+				
                 <h3 style="margin: 25px 0 15px 0; color: #2c3e50; font-size: 1.2rem;">📈 Interest Rates (%)</h3>
                 
                 <div class="three-column">
@@ -369,13 +398,13 @@
                 
                 <div class="two-column">
                     <div class="input-group">
-                        <label>Ontario Land Transfer Tax</label>
-                        <input type="number" id="ontarioLTT" value="0" readonly>
+                        <label>Ontario Land Transfer Tax (calculated)</label>
+                        <input type="number" id="ontarioLTT" value="0" readonly="readonly">
                     </div>
                     
                     <div class="input-group">
-                        <label>Toronto Land Transfer Tax</label>
-                        <input type="number" id="torontoLTT" value="0" readonly>
+                        <label>Toronto Land Transfer Tax (calculated)</label>
+                        <input type="number" id="torontoLTT" value="0" readonly="readonly">
                     </div>
                 </div>
 
@@ -397,8 +426,8 @@
                 </div>
 
                 <div class="input-group">
-                    <label>CMHC Insurance ($)</label>
-                    <input type="number" id="cmhcInsurance" value="0" readonly>
+                    <label>CMHC Insurance (calculated)</label>
+                    <input type="number" id="cmhcInsurance" value="0" readonly="readonly">
                 </div>
 
                 <h3 style="margin: 25px 0 15px 0; color: #2c3e50; font-size: 1.2rem;">💰 Property Costs (% of house value)</h3>
@@ -873,10 +902,15 @@
         function updateCalculatedFields() {
             const housePrice = parseFloat(document.getElementById('housePrice').value) || 0;
             const downPaymentPercent = parseFloat(document.getElementById('downPayment').value) / 100 || 0;
-            
+            const ontarioLTTField = document.getElementById('ontarioLTT');
+			const torontoLTTField = document.getElementById('torontoLTT');
+			const cmhcField = document.getElementById('cmhcInsurance');
+	
             // Update land transfer taxes
             document.getElementById('ontarioLTT').value = Math.round(calculateOntarioLTT(housePrice));
+			ontarioLTTField.setAttribute('readonly', 'readonly');
             document.getElementById('torontoLTT').value = Math.round(calculateTorontoLTT(housePrice));
+			torontoLTTField.setAttribute('readonly', 'readonly');
             
             // Update CMHC insurance
             const mortgageAmount = housePrice * (1 - downPaymentPercent);
@@ -891,6 +925,7 @@
                 }
             }
             document.getElementById('cmhcInsurance').value = Math.round(cmhcInsurance);
+			cmhcField.setAttribute('readonly', 'readonly');
         }
 
         // Add event listeners for auto-updating calculated fields
