@@ -375,8 +375,17 @@
                         <input type="number" id="amortization" value="25" min="1" max="30">
                     </div>
                 </div>
-					
-                <h3 style="margin: 25px 0 15px 0; color: #2c3e50; font-size: 1.2rem;">🏗️ Closing Costs ($)</h3>
+				
+				<div class="input-group" style="margin: 20px 0;">
+					<label style="display: flex; align-items: center; font-weight: 500; color: #34495e; font-size: 0.95rem;">
+						<input type="checkbox" id="propertyInToronto" 
+						   style="margin-right: 10px; width: auto; transform: scale(1.2);" 
+						   onchange="updateCalculatedFields()" checked>
+						Property in Toronto (includes Toronto Land Transfer Tax)
+					</label>
+				</div>	
+                
+				<h3 style="margin: 25px 0 15px 0; color: #2c3e50; font-size: 1.2rem;">🏗️ Closing Costs ($)</h3>
                 
                 <div class="three-column">
                     <div class="input-group">
@@ -673,9 +682,7 @@
                 parseFloat(document.getElementById('cpiRate2').value) / 100,
                 parseFloat(document.getElementById('cpiRate3').value) / 100
             ];
-            const rentersInsuranceRates = [
-                parseFloat(document.getElementById('rentersInsurancePercent').value) / 100,
-            ];
+            const rentersInsuranceRate = parseFloat(document.getElementById('rentersInsurancePercent').value) / 100;
             
             const investmentTaxRate = parseFloat(document.getElementById('investmentTaxRate').value) / 100;
 
@@ -887,34 +894,42 @@
         }
 
         // Auto-calculate land transfer taxes and CMHC when house price or down payment changes
-        function updateCalculatedFields() {
-            const housePrice = parseFloat(document.getElementById('housePrice').value) || 0;
-            const downPaymentPercent = parseFloat(document.getElementById('downPayment').value) / 100 || 0;
-            const ontarioLTTField = document.getElementById('ontarioLTT');
+
+		function updateCalculatedFields() {
+			const housePrice = parseFloat(document.getElementById('housePrice').value) || 0;
+			const downPaymentPercent = parseFloat(document.getElementById('downPayment').value) / 100 || 0;
+			const isTorontoProperty = document.getElementById('propertyInToronto').checked;
+			const ontarioLTTField = document.getElementById('ontarioLTT');
 			const torontoLTTField = document.getElementById('torontoLTT');
 			const cmhcField = document.getElementById('cmhcInsurance');
-	
-            // Update land transfer taxes
-            document.getElementById('ontarioLTT').value = Math.round(calculateOntarioLTT(housePrice));
+
+			// Update land transfer taxes
+			document.getElementById('ontarioLTT').value = Math.round(calculateOntarioLTT(housePrice));
 			ontarioLTTField.setAttribute('readonly', 'readonly');
-            document.getElementById('torontoLTT').value = Math.round(calculateTorontoLTT(housePrice));
+			
+			// Only calculate Toronto LTT if property is in Toronto
+			if (isTorontoProperty) {
+				document.getElementById('torontoLTT').value = Math.round(calculateTorontoLTT(housePrice));
+			} else {
+				document.getElementById('torontoLTT').value = 0;
+			}
 			torontoLTTField.setAttribute('readonly', 'readonly');
-            
-            // Update CMHC insurance
-            const mortgageAmount = housePrice * (1 - downPaymentPercent);
-            let cmhcInsurance = 0;
-            if (downPaymentPercent < 0.20 && downPaymentPercent > 0.05) {
-                if (downPaymentPercent >= 0.15) {
-                    cmhcInsurance = mortgageAmount * 0.028;
-                } else if (downPaymentPercent >= 0.10) {
-                    cmhcInsurance = mortgageAmount * 0.031;
-                } else {
-                    cmhcInsurance = mortgageAmount * 0.04;
-                }
-            }
-            document.getElementById('cmhcInsurance').value = Math.round(cmhcInsurance);
+			
+			// Update CMHC insurance
+			const mortgageAmount = housePrice * (1 - downPaymentPercent);
+			let cmhcInsurance = 0;
+			if (downPaymentPercent < 0.20 && downPaymentPercent > 0.05) {
+				if (downPaymentPercent >= 0.15) {
+					cmhcInsurance = mortgageAmount * 0.028;
+				} else if (downPaymentPercent >= 0.10) {
+					cmhcInsurance = mortgageAmount * 0.031;
+				} else {
+					cmhcInsurance = mortgageAmount * 0.04;
+				}
+			}
+			document.getElementById('cmhcInsurance').value = Math.round(cmhcInsurance);
 			cmhcField.setAttribute('readonly', 'readonly');
-        }
+		}
 
         // Add event listeners for auto-updating calculated fields
         document.addEventListener('DOMContentLoaded', function() {
