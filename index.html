@@ -26,17 +26,17 @@
 				<div class="three-column">
 					<div class="input-group">
 						<label>Initial Monthly Rent ($)</label>
-						<input type="number" id="monthlyRent" value="4200">
+						<input type="number" id="monthlyRent" value="5000">
                 </div>
                 
                     <div class="input-group">
                         <label>Annual Rent Increase (%)</label>
-                        <input type="number" id="rentIncrease" value="3.0" step="0.1">
+                        <input type="number" id="rentIncrease" value="1.5" step="0.1">
                 </div>
                     
                     <div class="input-group">
                         <label>Renters Insurance (% of rent)</label>
-                        <input type="number" id="rentersInsurancePercent" value="0.5" step="0.1">
+                        <input type="number" id="rentersInsurancePercent" value="1.0" step="0.1">
                     </div>
                 </div>
 				
@@ -45,7 +45,7 @@
                 <div class="three-column">
                     <div class="input-group">
                         <label>House Purchase Price ($)</label>
-                        <input type="number" id="housePrice" value="1400000">
+                        <input type="number" id="housePrice" value="1500000">
                     </div>
                     
                     <div class="input-group">
@@ -204,51 +204,27 @@
 
                 <h3 style="margin: 25px 0 15px 0; color: #2c3e50; font-size: 1.2rem;">📊 Investment & Economic</h3>
                 
-                <div class="period-label">First 5 Years:</div>
-
-				<div class="two-column">
-					<div class="input-group">
-						<label>Investment Return %</label>
-						<input type="number" id="investmentReturn1" value="6.0" step="0.1">
-					</div>
-    
-					<div class="input-group">
-						<label>CPI Rate % (rent increase)</label>
-						<input type="number" id="cpiRate1" value="4.0" step="0.1">
-					</div>
+				<div class="period-label">First 5 Years:</div>
+				<div class="input-group">
+					<label>Investment Return %</label>
+					<input type="number" id="investmentReturn1" value="10.0" step="0.1">
 				</div>
 
-                <div class="period-label">Next 5 Years:</div>
-                <div class="two-column">
-                    <div class="input-group">
-                        <label>Investment Return %</label>
-                        <input type="number" id="investmentReturn2" value="6.5" step="0.1">
-                    </div>
-                    
-                    <div class="input-group">
-                        <label>CPI Rate % (rent increase)</label>
-                        <input type="number" id="cpiRate2" value="3.5" step="0.1">
-                    </div>
+				<div class="period-label">Next 5 Years:</div>
+				<div class="input-group">
+					<label>Investment Return %</label>
+					<input type="number" id="investmentReturn2" value="8.0" step="0.1">
+				</div>
 
-                </div>
-
-                <div class="period-label">Final Years:</div>
-                <div class="two-column">
-                    <div class="input-group">
-                        <label>Investment Return %</label>
-                        <input type="number" id="investmentReturn3" value="7.0" step="0.1">
-                    </div>
-                    
-                    <div class="input-group">
-                        <label>CPI Rate % (rent increase)</label>
-                        <input type="number" id="cpiRate3" value="3.0" step="0.1">
-                    </div>
-
-                </div>
+				<div class="period-label">Final Years:</div>
+				<div class="input-group">
+					<label>Investment Return %</label>
+					<input type="number" id="investmentReturn3" value="6.0" step="0.1">
+				</div>
 
                 <div class="input-group">
                     <label>Investment Tax Rate %</label>
-                    <input type="number" id="investmentTaxRate" value="10.0" step="0.1">
+                    <input type="number" id="investmentTaxRate" value="27.0" step="0.1">
                 </div>
 
                 <button class="calculate-btn" onclick="calculateComparison()">
@@ -360,13 +336,9 @@
                 parseFloat(document.getElementById('investmentReturn2').value) / 100,
                 parseFloat(document.getElementById('investmentReturn3').value) / 100
             ];
-            const cpiRates = [
-                parseFloat(document.getElementById('cpiRate1').value) / 100,
-                parseFloat(document.getElementById('cpiRate2').value) / 100,
-                parseFloat(document.getElementById('cpiRate3').value) / 100
-            ];
+
             const rentersInsuranceRate = parseFloat(document.getElementById('rentersInsurancePercent').value) / 100;
-            
+            const rentIncrease = parseFloat(document.getElementById('rentIncrease').value) / 100;
             const investmentTaxRate = parseFloat(document.getElementById('investmentTaxRate').value) / 100;
 
             // Calculate initial values
@@ -416,7 +388,6 @@
                 const currentInsuranceRate = insuranceRates[period];
                 const currentAppreciationRate = appreciationRates[period];
                 const currentInvestmentReturn = investmentReturns[period];
-                const currentCpiRate = cpiRates[period];
 
                 // Calculate mortgage payment (if still paying)
                 const remainingYears = Math.max(0, amortizationYears - (year - 1));
@@ -482,7 +453,7 @@
                 });
 
                 // Update rent for next year
-                currentRent *= (1 + currentCpiRate);
+                currentRent *= (1 + rentIncrease);
             }
 
             // Update UI with results
