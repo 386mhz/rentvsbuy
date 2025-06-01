@@ -314,3 +314,30 @@ tr:hover {
     font-size: 1.1rem;
     font-weight: 500;
 }
+.comparison-card .winner-indicator {
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-top: 5px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.comparison-card .rent-better {
+    color: #28a745;
+}
+
+.comparison-card .buy-better {
+    color: #dc3545;
+}
+
+.comparison-card.winner {
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    border-color: #28a745;
+    transform: scale(1.02);
+}
+
+.comparison-card.buy-winner {
+    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+    border-color: #dc3545;
+    transform: scale(1.02);
+}

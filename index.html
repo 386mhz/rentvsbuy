@@ -213,7 +213,7 @@
 					</div>
     
 					<div class="input-group">
-						<label>CPI Rate %</label>
+						<label>CPI Rate % (rent increase)</label>
 						<input type="number" id="cpiRate1" value="4.0" step="0.1">
 					</div>
 				</div>
@@ -226,7 +226,7 @@
                     </div>
                     
                     <div class="input-group">
-                        <label>CPI Rate %</label>
+                        <label>CPI Rate % (rent increase)</label>
                         <input type="number" id="cpiRate2" value="3.5" step="0.1">
                     </div>
 
@@ -240,7 +240,7 @@
                     </div>
                     
                     <div class="input-group">
-                        <label>CPI Rate %</label>
+                        <label>CPI Rate % (rent increase)</label>
                         <input type="number" id="cpiRate3" value="3.0" step="0.1">
                     </div>
 
@@ -520,30 +520,48 @@
         }
 
         function updateResults(results) {
-            // Update summary cards
-            const result1 = results[0]; // Year 1
-            const result5 = results[4]; // Year 5
-            const result10 = results[9]; // Year 10
-            const result20 = results[19]; // Year 20
-            const result30 = results[29]; // Year 30
+			// Update summary cards
+			const result1 = results[0]; // Year 1
+			const result5 = results[4]; // Year 5
+			const result10 = results[9]; // Year 10
+			const result20 = results[19]; // Year 20
+			const result30 = results[29]; // Year 30
 
-            document.getElementById('result1').textContent = formatCurrency(result1.difference);
-            document.getElementById('result5').textContent = formatCurrency(result5.difference);
-            document.getElementById('result10').textContent = formatCurrency(result10.difference);
-            document.getElementById('result20').textContent = formatCurrency(result20.difference);
-            document.getElementById('result30').textContent = formatCurrency(result30.difference);
+			// Helper function to update card with winner indication
+			function updateCard(elementId, result) {
+				const element = document.getElementById(elementId);
+				const card = element.closest('.comparison-card');
+        
+				// Remove existing winner class
+				card.classList.remove('winner');
+        
+				if (result.difference > 0) {
+					// Renting is better
+					element.innerHTML = `${formatCurrency(result.difference)}<div style="font-size: 0.7rem; color: #28a745; font-weight: 600; margin-top: 5px;">📈 RENT BETTER</div>`;
+					card.classList.add('winner');
+				} else {
+					// Buying is better
+					element.innerHTML = `${formatCurrency(result.difference)}<div style="font-size: 0.7rem; color: #dc3545; font-weight: 600; margin-top: 5px;">🏠 BUY BETTER</div>`;
+				}
+		}
+
+		updateCard('result1', result1);
+		updateCard('result5', result5);
+		updateCard('result10', result10);
+		updateCard('result20', result20);
+		updateCard('result30', result30);
 
             // Update summary highlight based on 10-year result
             const summaryElement = document.getElementById('summaryResult');
             if (result10.difference > 0) {
                 summaryElement.innerHTML = `
-                    <h3>🏆 Renting is Better</h3>
-                    <p>After 10 years, renting saves you <strong>${formatCurrency(result10.difference)}</strong></p>
+                    <h3>🏆 Renting Provides A Better Return 🏆</h3>
+                    <p>After 10 years, renting is better than buying by <strong>${formatCurrency(result10.difference)}</strong></p>
                 `;
             } else {
                 summaryElement.innerHTML = `
-                    <h3>🏠 Buying is Better</h3>
-                    <p>After 10 years, buying saves you <strong>${formatCurrency(Math.abs(result10.difference))}</strong></p>
+                    <h3>🏠 Buying Provides A Better Return 🏠</h3>
+                    <p>After 10 years, buying is better than renting by <strong>${formatCurrency(Math.abs(result10.difference))}</strong></p>
                 `;
             }
 
